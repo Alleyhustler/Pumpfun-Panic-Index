@@ -1,0 +1,815 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pumpfun Panic Index</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700&family=Share+Tech+Mono&display=swap');
+        
+        :root {
+            --primary-color: #0a0a0a;
+            --secondary-color: #1a1a1a;
+            --accent-color: #ff3e3e;
+            --text-color: #e0e0e0;
+            --panel-bg: rgba(15, 15, 15, 0.8);
+            --border-color: #333;
+            --glow-color: rgba(255, 62, 62, 0.6);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Share Tech Mono', monospace;
+            background-color: var(--primary-color);
+            color: var(--text-color);
+            overflow: hidden;
+            height: 100vh;
+            background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiPjxkZWZzPjxwYXR0ZXJuIGlkPSJwYXR0ZXJuIiBwYXR0ZXJuVW5pdHM9InVzZXJTcGFjZU9uVXNlIiB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHBhdHRlcm5UcmFuc2Zvcm09InJvdGF0ZSg0NSkiPjxyZWN0IHg9IjAiIHk9IjAiIHdpZHRoPSIyMCIgaGVpZ2h0PSIyMCIgZmlsbD0icmdiYSgyMCwgMjAsIDIwLCAwLjEpIi8+PC9wYXR0ZXJuPjwvZGVmcz48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSJyZ2IoMTAsIDEwLCAxMCkiLz48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSJ1cmwoI3BhdHRlcm4pIi8+PC9zdmc+');
+            position: relative;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .logo {
+            width: 100px;
+            height: 100px;
+            margin-bottom: 20px;
+            border-radius: 50%;
+            overflow: hidden;
+            border: 2px solid var(--border-color);
+            box-shadow: 0 0 15px rgba(255, 62, 62, 0.3);
+        }
+        
+        .logo img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2.5rem;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            color: var(--text-color);
+            text-shadow: 0 0 10px var(--glow-color);
+        }
+        
+        .twitter-link {
+            color: var(--text-color);
+            text-decoration: none;
+            font-size: 0.9rem;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            transition: color 0.3s;
+        }
+        
+        .twitter-link:hover {
+            color: var(--accent-color);
+        }
+        
+        .subline {
+            font-size: 1rem;
+            text-align: center;
+            margin-bottom: 40px;
+            color: #aaa;
+            max-width: 500px;
+        }
+        
+        .dashboard {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            max-width: 900px;
+        }
+        
+        .gauge-container {
+            position: relative;
+            width: 400px;
+            height: 200px;
+            margin-bottom: 40px;
+            cursor: pointer;
+        }
+        
+        .gauge {
+            width: 100%;
+            height: 100%;
+            position: relative;
+        }
+        
+        .gauge-bg {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 200px 200px 0 0;
+            background: var(--secondary-color);
+            overflow: hidden;
+            border: 2px solid var(--border-color);
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+        }
+        
+        .gauge-fill {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 200px 200px 0 0;
+            background: conic-gradient(
+                from -90deg at 50% 100%,
+                #00ff00 0%,
+                #ffff00 50%,
+                #ff0000 100%
+            );
+            clip-path: polygon(0 100%, 100% 100%, 100% 0, 0 0);
+            opacity: 0.15;
+        }
+        
+        .gauge-marks {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+        }
+        
+        .gauge-mark {
+            position: absolute;
+            bottom: 0;
+            width: 2px;
+            height: 15px;
+            background-color: var(--text-color);
+            transform-origin: bottom center;
+        }
+        
+        .gauge-label {
+            position: absolute;
+            transform: translateX(-50%);
+            font-size: 0.8rem;
+            color: var(--text-color);
+        }
+        
+        .gauge-needle {
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            width: 4px;
+            height: 180px;
+            background-color: var(--accent-color);
+            transform-origin: bottom center;
+            transform: translateX(-50%) rotate(-90deg);
+            transition: transform 2s cubic-bezier(0.23, 1, 0.32, 1);
+            z-index: 10;
+            box-shadow: 0 0 10px var(--accent-color);
+        }
+        
+        .gauge-needle::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 20px;
+            height: 20px;
+            background-color: var(--accent-color);
+            border-radius: 50%;
+            box-shadow: 0 0 10px var(--accent-color);
+        }
+        
+        .gauge-center {
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 60px;
+            background-color: var(--secondary-color);
+            border-radius: 50%;
+            border: 2px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 20;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.7);
+        }
+        
+        .panic-value {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--accent-color);
+        }
+        
+        .panic-status {
+            font-size: 0.7rem;
+            color: var(--text-color);
+        }
+        
+        .data-panel {
+            background-color: var(--panel-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+            padding: 20px;
+            width: 100%;
+            max-width: 600px;
+            margin-bottom: 20px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+        }
+        
+        .data-values {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+        
+        .data-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .data-label {
+            color: #aaa;
+        }
+        
+        .data-value {
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 500;
+            color: var(--text-color);
+        }
+        
+        .feed-container {
+            background-color: var(--panel-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+            padding: 15px;
+            width: 100%;
+            max-width: 600px;
+            height: 200px;
+            overflow: hidden;
+            position: relative;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+        }
+        
+        .feed-title {
+            font-size: 0.9rem;
+            color: #aaa;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .feed {
+            height: 160px;
+            overflow-y: auto;
+            font-size: 0.85rem;
+        }
+        
+        .feed-item {
+            padding: 5px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            animation: fadeIn 0.5s ease-in;
+        }
+        
+        .feed-time {
+            color: #777;
+        }
+        
+        .feed-message {
+            color: var(--text-color);
+        }
+        
+        .redistribution-notice {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: rgba(10, 10, 10, 0.9);
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+            padding: 10px 20px;
+            font-size: 0.9rem;
+            opacity: 0;
+            transition: opacity 0.5s;
+            z-index: 100;
+            box-shadow: 0 0 10px rgba(255, 62, 62, 0.3);
+        }
+        
+        .footer {
+            position: fixed;
+            bottom: 10px;
+            width: 100%;
+            text-align: center;
+            font-size: 0.8rem;
+            color: #555;
+        }
+        
+        .warning-light {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background-color: #ff3e3e;
+            opacity: 0;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { opacity: 0.3; }
+            50% { opacity: 1; }
+            100% { opacity: 0.3; }
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        .data-layers {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(10, 10, 10, 0.95);
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 30;
+            padding: 20px;
+        }
+        
+        .layer-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+        
+        .chart-container {
+            width: 80%;
+            height: 300px;
+            background-color: var(--panel-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+            margin-bottom: 20px;
+            padding: 15px;
+            position: relative;
+        }
+        
+        .chart {
+            width: 100%;
+            height: 100%;
+            position: relative;
+        }
+        
+        .chart-line {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background-color: var(--accent-color);
+            opacity: 0.3;
+        }
+        
+        .chart-point {
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            background-color: var(--accent-color);
+            border-radius: 50%;
+            transform: translate(-50%, 50%);
+        }
+        
+        .close-layer {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: none;
+            border: none;
+            color: var(--text-color);
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+        
+        .mode-toggle {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background-color: var(--panel-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+            padding: 8px 15px;
+            font-family: 'Share Tech Mono', monospace;
+            color: var(--text-color);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .mode-toggle:hover {
+            background-color: var(--secondary-color);
+        }
+        
+        /* Hide scrollbar for feed */
+        .feed::-webkit-scrollbar {
+            width: 5px;
+        }
+        
+        .feed::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+        }
+        
+        .feed::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">
+            <img src="WE DGAF IF THERE IS NO VOLUME (2).png" alt="Pumpfun Panic Index Logo">
+        </div>
+        <h1 class="title">Pumpfun Panic Index</h1>
+        <a href="https://x.com/PumpfunPanicIndex" class="twitter-link" target="_blank">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"></path>
+            </svg>
+            @PumpfunPanicIndex
+        </a>
+        <p class="subline">Protocol tracking the collective fear of the degens.</p>
+        
+        <div class="dashboard">
+            <div class="gauge-container" id="gauge-container">
+                <div class="gauge">
+                    <div class="gauge-bg"></div>
+                    <div class="gauge-fill"></div>
+                    <div class="gauge-marks" id="gauge-marks"></div>
+                    <div class="gauge-needle" id="needle"></div>
+                    <div class="gauge-center">
+                        <div class="panic-value" id="panic-value">87</div>
+                        <div class="panic-status" id="panic-status">CRITICAL</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="data-panel">
+                <div class="data-values">
+                    <div class="data-item">
+                        <span class="data-label">PANIC INDEX</span>
+                        <span class="data-value" id="index-value">87</span>
+                    </div>
+                    <div class="data-item">
+                        <span class="data-label">STATUS</span>
+                        <span class="data-value" id="status-value">CRITICAL</span>
+                    </div>
+                    <div class="data-item">
+                        <span class="data-label">ACTIVE HOLDERS</span>
+                        <span class="data-value" id="holders-value">14,392</span>
+                    </div>
+                    <div class="data-item">
+                        <span class="data-label">EXIT EVENTS</span>
+                        <span class="data-value" id="exits-value">216</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="feed-container">
+                <div class="feed-title">Protocol Data Feed</div>
+                <div class="feed" id="data-feed">
+                    <!-- Feed items will be added here dynamically -->
+                </div>
+            </div>
+        </div>
+        
+        <div class="warning-light" id="warning-light"></div>
+        
+        <button class="mode-toggle" id="mode-toggle">ARCHIVE MODE</button>
+        
+        <div class="data-layers" id="data-layers">
+            <button class="close-layer" id="close-layer">×</button>
+            <h2 class="layer-title">Fear Over Time</h2>
+            <div class="chart-container">
+                <div class="chart" id="chart">
+                    <!-- Chart will be drawn here -->
+                </div>
+            </div>
+            <div class="data-panel">
+                <div class="feed-title">Historical Panic Events</div>
+                <div class="feed" id="history-feed">
+                    <!-- Historical events will be added here -->
+                </div>
+            </div>
+        </div>
+        
+        <div class="redistribution-notice" id="redistribution-notice">
+            Redistribution complete. Survivors rewarded from recent exit slice.
+        </div>
+    </div>
+    
+    <div class="footer">
+        All readings approximate. Panic is permanent.
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize gauge marks with proper positioning
+            function initializeGaugeMarks() {
+                const gaugeMarks = document.getElementById('gauge-marks');
+                gaugeMarks.innerHTML = ''; // Clear any existing marks
+                
+                for (let i = 0; i <= 10; i++) {
+                    const value = i * 10;
+                    // Calculate angle: 0=leftmost (-90°), 100=rightmost (90°)
+                    const angle = -90 + (value / 100) * 180;
+                    
+                    const mark = document.createElement('div');
+                    mark.className = 'gauge-mark';
+                    mark.style.left = `calc(50% - 1px)`;
+                    mark.style.transform = `rotate(${angle}deg)`;
+                    
+                    const label = document.createElement('div');
+                    label.className = 'gauge-label';
+                    label.textContent = value;
+                    
+                    // Position labels along the arc using trigonometry
+                    const radius = 180; // Distance from center
+                    const radian = angle * Math.PI / 180;
+                    const x = Math.sin(radian) * radius;
+                    const y = -Math.cos(radian) * radius;
+                    
+                    label.style.left = `calc(50% + ${x}px)`;
+                    label.style.bottom = `calc(50% + ${y}px)`;
+                    
+                    gaugeMarks.appendChild(mark);
+                    gaugeMarks.appendChild(label);
+                }
+            }
+            
+            initializeGaugeMarks();
+            
+            // Elements
+            const needle = document.getElementById('needle');
+            const panicValue = document.getElementById('panic-value');
+            const panicStatus = document.getElementById('panic-status');
+            const indexValue = document.getElementById('index-value');
+            const statusValue = document.getElementById('status-value');
+            const holdersValue = document.getElementById('holders-value');
+            const exitsValue = document.getElementById('exits-value');
+            const dataFeed = document.getElementById('data-feed');
+            const warningLight = document.getElementById('warning-light');
+            const redistributionNotice = document.getElementById('redistribution-notice');
+            const modeToggle = document.getElementById('mode-toggle');
+            const dataLayers = document.getElementById('data-layers');
+            const closeLayer = document.getElementById('close-layer');
+            const historyFeed = document.getElementById('history-feed');
+            const gaugeContainer = document.getElementById('gauge-container');
+            const chart = document.getElementById('chart');
+            
+            // Initial values
+            let panicIndex = 87;
+            let activeHolders = 14392;
+            let exitEvents = 216;
+            let isArchiveMode = false;
+            
+            // Status thresholds
+            const statusThresholds = [
+                { min: 0, max: 20, status: 'CALM', color: '#00ff00' },
+                { min: 21, max: 40, status: 'STABLE', color: '#aaff00' },
+                { min: 41, max: 60, status: 'CONCERN', color: '#ffff00' },
+                { min: 61, max: 80, status: 'PANIC', color: '#ffaa00' },
+                { min: 81, max: 100, status: 'CRITICAL', color: '#ff3e3e' }
+            ];
+            
+            // Feed messages templates
+            const feedMessages = [
+                "Holder #{id} exited with -{percent}%",
+                "Fear spike detected — Index +{value}",
+                "Redistribution event triggered",
+                "Protocol stability at {percent}%",
+                "Panic contagion detected in sector {sector}",
+                "Emotional volatility exceeding thresholds",
+                "Degen sentiment analysis: FEAR",
+                "Liquidity drain detected: {amount} SOL",
+                "Holder #{id} doubled down position",
+                "Market sentiment: EXTREME FEAR"
+            ];
+            
+            // Historical events
+            const historicalEvents = [
+                { time: "09:45 UTC", event: "Mass panic sell-off", drop: "-23%" },
+                { time: "11:20 UTC", event: "Protocol stability breach", drop: "-18%" },
+                { time: "13:05 UTC", event: "Fear contagion event", drop: "-31%" },
+                { time: "15:40 UTC", event: "Redistribution cycle #42", drop: "-12%" },
+                { time: "17:15 UTC", event: "Holder capitulation wave", drop: "-27%" }
+            ];
+            
+            // Initialize historical events
+            historicalEvents.forEach(event => {
+                const item = document.createElement('div');
+                item.className = 'feed-item';
+                item.innerHTML = `<span class="feed-time">[${event.time}]</span> <span class="feed-message">${event.event} (${event.drop})</span>`;
+                historyFeed.appendChild(item);
+            });
+            
+            // Create chart
+            function createChart() {
+                chart.innerHTML = '';
+                
+                // Add horizontal lines
+                for (let i = 0; i <= 5; i++) {
+                    const line = document.createElement('div');
+                    line.className = 'chart-line';
+                    line.style.bottom = `${i * 20}%`;
+                    chart.appendChild(line);
+                }
+                
+                // Generate random data points for the chart
+                const points = [];
+                const width = chart.offsetWidth;
+                const height = chart.offsetHeight;
+                
+                for (let i = 0; i < 20; i++) {
+                    const point = document.createElement('div');
+                    point.className = 'chart-point';
+                    
+                    const x = (i / 19) * width;
+                    const y = height - (Math.random() * 0.7 + 0.1) * height;
+                    
+                    point.style.left = `${x}px`;
+                    point.style.bottom = `${y}px`;
+                    
+                    chart.appendChild(point);
+                    points.push(point);
+                }
+            }
+            
+            // Update gauge and values
+            function updateGauge() {
+                // Calculate needle position (0-100 maps to -90deg to 90deg)
+                const minAngle = -90;  // Leftmost position (0%)
+                const maxAngle = 90;   // Rightmost position (100%)
+                const angle = minAngle + (panicIndex / 100) * (maxAngle - minAngle);
+                
+                needle.style.transform = `translateX(-50%) rotate(${angle}deg)`;
+                
+                // Update values
+                panicValue.textContent = panicIndex;
+                indexValue.textContent = panicIndex;
+                
+                // Update status
+                const status = statusThresholds.find(s => panicIndex >= s.min && panicIndex <= s.max);
+                if (status) {
+                    panicStatus.textContent = status.status;
+                    statusValue.textContent = status.status;
+                    panicStatus.style.color = status.color;
+                    statusValue.style.color = status.color;
+                }
+                
+                // Update warning light
+                if (panicIndex > 80) {
+                    warningLight.style.opacity = '1';
+                } else {
+                    warningLight.style.opacity = '0';
+                }
+            }
+            
+            // Add feed message
+            function addFeedMessage() {
+                const template = feedMessages[Math.floor(Math.random() * feedMessages.length)];
+                const message = template
+                    .replace('{id}', Math.floor(Math.random() * 10000))
+                    .replace('{percent}', Math.floor(Math.random() * 70) + 10)
+                    .replace('{value}', Math.floor(Math.random() * 15) + 1)
+                    .replace('{sector}', Math.floor(Math.random() * 10) + 1)
+                    .replace('{amount}', (Math.random() * 50 + 10).toFixed(1));
+                
+                const now = new Date();
+                const timeString = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')} UTC`;
+                
+                const item = document.createElement('div');
+                item.className = 'feed-item';
+                item.innerHTML = `<span class="feed-time">[${timeString}]</span> <span class="feed-message">${message}</span>`;
+                
+                dataFeed.prepend(item);
+                
+                // Limit feed items
+                if (dataFeed.children.length > 15) {
+                    dataFeed.removeChild(dataFeed.lastChild);
+                }
+            }
+            
+            // Show redistribution notice
+            function showRedistributionNotice() {
+                redistributionNotice.style.opacity = '1';
+                setTimeout(() => {
+                    redistributionNotice.style.opacity = '0';
+                }, 3000);
+            }
+            
+            // Simulate data updates
+            function simulateDataUpdate() {
+                if (isArchiveMode) return;
+                
+                // Randomly change panic index (with tendency to increase)
+                const change = Math.random() > 0.6 ? 
+                    Math.floor(Math.random() * 10) + 1 : 
+                    -(Math.floor(Math.random() * 5) + 1);
+                
+                panicIndex = Math.max(0, Math.min(100, panicIndex + change));
+                
+                // Update holders and exits
+                if (change > 0 && panicIndex > 70) {
+                    // More exits during high panic
+                    const exits = Math.floor(Math.random() * 5) + 1;
+                    exitEvents += exits;
+                    activeHolders = Math.max(0, activeHolders - exits);
+                } else if (change < 0 && panicIndex < 30) {
+                    // Some recovery during calm
+                    const recovery = Math.floor(Math.random() * 3) + 1;
+                    activeHolders += recovery;
+                }
+                
+                holdersValue.textContent = activeHolders.toLocaleString();
+                exitsValue.textContent = exitEvents;
+                
+                updateGauge();
+                addFeedMessage();
+                
+                // Occasionally show redistribution notice
+                if (Math.random() > 0.8) {
+                    showRedistributionNotice();
+                }
+            }
+            
+            // Toggle archive mode
+            modeToggle.addEventListener('click', function() {
+                isArchiveMode = !isArchiveMode;
+                modeToggle.textContent = isArchiveMode ? 'LIVE MODE' : 'ARCHIVE MODE';
+                
+                if (isArchiveMode) {
+                    // Show historical data
+                    dataLayers.style.display = 'flex';
+                    createChart();
+                } else {
+                    dataLayers.style.display = 'none';
+                }
+            });
+            
+            // Close data layers
+            closeLayer.addEventListener('click', function() {
+                dataLayers.style.display = 'none';
+                isArchiveMode = false;
+                modeToggle.textContent = 'ARCHIVE MODE';
+            });
+            
+            // Show data layers on gauge click
+            gaugeContainer.addEventListener('click', function() {
+                dataLayers.style.display = 'flex';
+                isArchiveMode = true;
+                modeToggle.textContent = 'LIVE MODE';
+                createChart();
+            });
+            
+            // Initialize
+            updateGauge();
+            
+            // Add initial feed messages
+            for (let i = 0; i < 8; i++) {
+                addFeedMessage();
+            }
+            
+            // Start simulation
+            setInterval(simulateDataUpdate, 3000);
+            
+            // Show initial redistribution notice
+            setTimeout(showRedistributionNotice, 2000);
+        });
+    </script>
+</body>
+</html>
